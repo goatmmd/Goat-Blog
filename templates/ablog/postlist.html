@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1> Posts </h1>
+<ul>
+    {% for post in posts %}
+        <li> <strong><a href="{% url 'post-detail' post.pk %}">
+            {{post.title}} </a></strong> - {{post.author.username}} | <small> {{post.created_time}} </small> <br>
+            {{post.body|truncatechars:10|safe}}
+        </li>
+        <br>
+    {% endfor %}
+</ul>
+{% endblock %}
+

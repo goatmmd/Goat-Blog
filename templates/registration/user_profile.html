@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} User Profile {% endblock %}
+
+{% block  content %}
+
+<div class="card mb-3" style="max-width: 540px;">
+  <div class="row g-0">
+    <div class="col-md-2">
+      {% if object.profile_pic %}
+        <img src="{{ object.profile_pic.url }}" class="img-fluid rounded-start" alt="...">
+      {% else %}
+        <img src="{% static 'images/defult.png'%}" class="img-fluid rounded-start" alt="...">
+      {% endif %}
+    </div>
+    <div class="col-md-10">
+      <div class="card-body">
+        <h5 class="card-title">{{ object.user }}</h5>
+        <p class="card-text"> {{ object.bio }}</p>
+        <p class="small text-muted"> <a href="{% url 'show-profile-page' object.pk %}"> Socials </a></p>
+        <p class="card-text"><small class="text-muted">{{ object.time }}</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+    Social Medias
+  </button>
+  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+    {% for url in object.socials.all %}
+      <li><a class="dropdown-item" href="{{ url.social }}">{{url.social }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+
+
+
+{% endblock %}

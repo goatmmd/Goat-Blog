@@ -1,0 +1,84 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block content %}
+<h1>{{object.title}}</h1>
+<small>By: {{object.author}} - {{object.created_time}} </small>
+<hr>
+
+<p>
+    {{object.body|safe}}
+</p>
+
+<br>
+<a href="{% url 'home'%}" class="btn btn-dark"> Back </a>
+<br>
+<hr>
+{% if user in likes %}
+<form action="{% url 'unlike-posts' object.pk %}" method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger btn-sm" > LIKED </button> - <strong> {{object.likes.count}} </strong>
+
+</form>
+{% else %}
+<form action="{% url 'like-posts' object.pk %}" method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger btn-sm" > LIKE </button> - <strong> {{object.likes.count}} </strong>
+
+</form>
+{% endif  %}
+
+<br> <br>
+<div class="card mb-3" style="max-width: 540px;">
+  <div class="row g-0">
+    <div class="col-md-2">
+      {% if object.author.profile.profile_pic %}
+        <a href="{% url 'show-profile-page' object.author.profile.pk %}"> <img src="{{ object.author.profile.profile_pic.url }}" class="img-fluid rounded-start" alt="..."> </a>
+      {% else %}
+       <a href="{% url 'show-profile-page' object.author.profile.pk %}"> <img src="{% static 'images/defult.png'%}" class="img-fluid rounded-start" alt="..."> </a>
+      {% endif %}
+    </div>
+    <div class="col-md-10">
+      <div class="card-body">
+        <h5 class="card-title">{{ object.author.username }}</h5>
+        <p class="card-text"> {{ object.author.profile.bio }}</p>
+        <p class="small text-muted"> <a href="{% url 'show-profile-page' object.author.profile.pk %}"> Socials </a></p>
+        <p class="card-text"><small class="text-muted">{{ object.author.last_login.time }}</small></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br>
+<br>
+<br>
+<div class="comments">
+    <h2> Total Comments ({{object.comments.all.count}})</h2>
+    <ul>
+        {% for cm in object.comments.all %}
+            <li>
+                <comment>
+                    {{ cm.user }} - written at {{ cm.created_time.date }}
+                    <hr>
+                    {{ cm.comment_text }}
+                </comment>
+                        <br><br><br>
+
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="container">
+        {% if request.user.is_authenticated %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" value="Save"> Add comment </button>
+                <input type="hidden" name='url' value="{{ object.get_absolute_url }}">
+                <input type="hidden" name='post_id' value="{{ object.pk }}">
+
+            </form>
+        {% else %} <h2> For add new comment please <strong> <a href="{% url 'login' %}"> click here </a> to login </strong> </h2>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
